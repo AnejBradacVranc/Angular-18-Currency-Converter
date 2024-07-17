@@ -1,1 +1,11 @@
-<p>home works!</p>
+<p-inputGroup>
+  <p-inputGroupAddon>$</p-inputGroupAddon>
+  <p-inputNumber inputId="amount" [(ngModel)]="amount" />
+</p-inputGroup>
+<p-autoComplete
+  [(ngModel)]="selectedCurrency"
+  [dropdown]="true"
+  [suggestions]="filteredCurrencies"
+  (completeMethod)="filterCurrencies($event)"
+  field="name"
+/>

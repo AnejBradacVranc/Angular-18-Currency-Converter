@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 import { Observable } from 'rxjs';
-import { ExchangeRates, RequestParams } from '../../types';
+import {
+  ExchangeRateRequestParams,
+  ExchangeRates,
+  RequestParams,
+} from '../../types';
 
 @Injectable({
   providedIn: 'root',
@@ -9,9 +13,9 @@ import { ExchangeRates, RequestParams } from '../../types';
 export class ExchangeratesService {
   constructor(private apiService: ApiService) {}
 
-  getProducts = (
+  getExchangeRates = (
     url: string,
-    params: RequestParams
+    params: ExchangeRateRequestParams
   ): Observable<ExchangeRates> => {
     return this.apiService.get(url, {
       params,
