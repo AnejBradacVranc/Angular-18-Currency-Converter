@@ -51,3 +51,7 @@ export interface ExchangeRateRequestParams extends RequestParams {
   base: string;
   currencies: string;
 }
+
+export interface CurrencyDropdownSelectionObj {
+  name: string;
+}

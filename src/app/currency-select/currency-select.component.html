@@ -1,0 +1,12 @@
+<div class="field">
+  <label for="{{ inputId }} ">{{ label }}</label>
+  <p-autoComplete
+    [(ngModel)]="selectedCurrency"
+    [dropdown]="true"
+    [suggestions]="filteredCurrencies"
+    (completeMethod)="filterCurrencies($event)"
+    inputId="{{ inputId }}"
+    field="name"
+    (onSelect)="onSelectionEvent($event)"
+  ></p-autoComplete>
+</div>

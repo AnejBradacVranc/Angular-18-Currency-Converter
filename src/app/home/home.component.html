@@ -1,11 +1,37 @@
-<p-inputGroup>
-  <p-inputGroupAddon>$</p-inputGroupAddon>
-  <p-inputNumber inputId="amount" [(ngModel)]="amount" />
-</p-inputGroup>
-<p-autoComplete
-  [(ngModel)]="selectedCurrency"
-  [dropdown]="true"
-  [suggestions]="filteredCurrencies"
-  (completeMethod)="filterCurrencies($event)"
-  field="name"
-/>
+<h1>Currency converter</h1>
+<div class="p-fluid m-5 p-5">
+  <div
+    class="flex flex-column align-items-center justify-content-center md:flex-row gap-3"
+  >
+    <div class="field">
+      <label for="amount">Amount</label>
+      <p-inputNumber
+        inputId="amount"
+        [(ngModel)]="amount"
+        mode="currency"
+        currency="EUR"
+        locale="de-DE"
+      ></p-inputNumber>
+    </div>
+
+    <div>
+      <app-currency-select
+        [(selectedCurrency)]="currencyFrom"
+        label="From"
+        inputId="currencyFrom"
+        (currencyChange)="sharedService.setCurrencyFrom($event)"
+      ></app-currency-select>
+    </div>
+
+    <app-switch-button (swapMethod)="swapCurrencies()"></app-switch-button>
+
+    <div>
+      <app-currency-select
+        [(selectedCurrency)]="currencyTo"
+        label="To"
+        inputId="currencyTo"
+        (currencyChange)="sharedService.setCurrencyTo($event)"
+      ></app-currency-select>
+    </div>
+  </div>
+</div>
