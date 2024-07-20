@@ -31,13 +31,6 @@ export interface ExchangeRates {
   };
 }
 
-export interface Symbols {
-  success: Boolean;
-  symbols: {
-    [key: string]: string;
-  };
-}
-
 export interface RequestParams {
   [param: string]:
     | string
@@ -54,4 +47,23 @@ export interface ExchangeRateRequestParams extends RequestParams {
 
 export interface CurrencyDropdownSelectionObj {
   name: string;
+}
+
+export interface CountryInfoRequestParams {
+  [param: string]:
+    | string
+    | number
+    | boolean
+    | ReadonlyArray<string | number | boolean>;
+  status: boolean;
+  fields: string;
+}
+
+export interface CountryInfo {
+  currencies: {
+    [currencyCode: string]: {
+      name: string;
+      symbol: string;
+    };
+  };
 }

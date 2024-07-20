@@ -13,13 +13,13 @@ import {
 export class ExchangeratesService {
   constructor(private apiService: ApiService) {}
 
-  getExchangeRates = (
+  getExchangeRates(
     url: string,
     params: ExchangeRateRequestParams
-  ): Observable<ExchangeRates> => {
+  ): Observable<ExchangeRates> {
     return this.apiService.get(url, {
       params,
       responseType: 'json',
     });
-  };
+  }
 }

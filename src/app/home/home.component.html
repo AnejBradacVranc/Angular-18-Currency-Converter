@@ -16,6 +16,7 @@
 
     <div>
       <app-currency-select
+        [currCodes]="currencyCodes"
         [(selectedCurrency)]="currencyFrom"
         label="From"
         inputId="currencyFrom"
@@ -27,6 +28,7 @@
 
     <div>
       <app-currency-select
+        [currCodes]="currencyCodes"
         [(selectedCurrency)]="currencyTo"
         label="To"
         inputId="currencyTo"

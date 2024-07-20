@@ -8,11 +8,11 @@ import {
 } from 'primeng/autocomplete';
 import { FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { SymbolsService } from '../services/symbols.service';
-import { CurrencyDropdownSelectionObj, Symbols } from '../../types';
+import { CountryInfo, CurrencyDropdownSelectionObj } from '../../types';
 import { CurrencySelectComponent } from '../currency-select/currency-select.component';
 import { SwitchButtonComponent } from '../switch-button/switch-button.component';
 import { DropdownSharedService } from '../services/dropdown-shared.service';
+import { CountryInfoService } from '../services/country-info.service';
 
 @Component({
   selector: 'app-home',
@@ -35,7 +35,13 @@ export class HomeComponent {
   currencyFrom: CurrencyDropdownSelectionObj = { name: '' };
   currencyTo: CurrencyDropdownSelectionObj = { name: '' };
 
-  constructor(protected sharedService: DropdownSharedService) {
+  currencyCodes: any[] = [];
+  currencyInfos: Map<string, any> = new Map();
+
+  constructor(
+    protected sharedService: DropdownSharedService,
+    private countryInfoService: CountryInfoService
+  ) {
     this.sharedService.currencyFrom$.subscribe(
       (val: CurrencyDropdownSelectionObj) => {
         this.currencyFrom = val;
@@ -49,6 +55,43 @@ export class HomeComponent {
         this.onHandleCurrencyChange();
       }
     );
+  }
+
+  ngOnInit() {
+    this.countryInfoService
+      .getCountryInfos('https://restcountries.com/v3.1/all', {
+        fields: 'currencies',
+        status: true,
+      })
+      .subscribe((data: CountryInfo[]) => {
+        data.forEach((value: CountryInfo) => {
+          this.currencyInfos.set(
+            Object.entries(value.currencies).map(([key, value]) => {
+              return key;
+            })[0],
+            Object.entries(value.currencies).map(([key, value]) => {
+              return value;
+            })[0]
+          );
+
+          this.currencyCodes.push(
+            Object.entries(value.currencies).map(([key, value]) => {
+              return key;
+            })[0]
+          );
+        });
+
+        var arr = [...new Set(this.currencyCodes)].sort();
+
+        arr = arr.filter((value) => {
+          if (value === undefined) return false;
+          else return true;
+        });
+
+        this.currencyCodes = arr.map((value) => {
+          return { name: value };
+        });
+      });
   }
 
   swapCurrencies() {

@@ -8,8 +8,8 @@ import {
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DropdownSharedService } from '../services/dropdown-shared.service';
 import { ExchangeratesService } from '../services/exchangerates.service';
-import { SymbolsService } from '../services/symbols.service';
-import { CurrencyDropdownSelectionObj } from '../../types';
+import { CountryInfo, CurrencyDropdownSelectionObj } from '../../types';
+import { CountryInfoService } from '../services/country-info.service';
 
 @Component({
   selector: 'app-currency-select',
@@ -21,8 +21,7 @@ import { CurrencyDropdownSelectionObj } from '../../types';
 export class CurrencySelectComponent {
   @Input() label = '';
   @Input() inputId = '';
-
-  currencies: any[] = [];
+  @Input() currCodes: any[] = [];
 
   @Input() selectedCurrency: any;
   @Output() selectedCurrencyChange =
@@ -31,10 +30,7 @@ export class CurrencySelectComponent {
 
   filteredCurrencies: any[] = [];
 
-  constructor(
-    private exchangerateService: ExchangeratesService,
-    private symbolsService: SymbolsService
-  ) {}
+  constructor(private exchangerateService: ExchangeratesService) {}
 
   ngOnInit() {
     /*this.symbolsService
@@ -48,12 +44,9 @@ export class CurrencySelectComponent {
           }
         );
       });*/
-
     /*this.exchangerateService.getExchangeRates("https://api.forexrateapi.com/v1/latest", {api_key:"99cca293e5982c0bdbd1940c35137b07", base: "EUR", currencies: ["USD", "INR", "JPY"].join(',')}).subscribe((exchangeRates: ExchangeRates)=>{
       console.log(exchangeRates.rates);
     })*/
-
-    this.currencies = [{ name: 'USD' }, { name: 'EUR' }];
     //this.selectedCurrency = this.initialCurrency;
   }
 
@@ -61,8 +54,8 @@ export class CurrencySelectComponent {
     let filtered: any[] = [];
     let query = event.query;
 
-    for (let i = 0; i < (this.currencies as any[]).length; i++) {
-      let currency = (this.currencies as any[])[i];
+    for (let i = 0; i < (this.currCodes as any[]).length; i++) {
+      let currency = (this.currCodes as any[])[i];
       if (currency.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
         filtered.push(currency);
       }
