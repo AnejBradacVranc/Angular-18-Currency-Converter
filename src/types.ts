@@ -23,26 +23,22 @@ export interface Options {
 }
 
 export interface ExchangeRates {
-  success: Boolean;
   base: string;
-  timestamp: number;
+  date: Date;
+  provider: string;
+  timeLastUpdated: number;
   rates: {
     [key: string]: number;
   };
 }
 
-export interface RequestParams {
+export interface ExchangeRateRequestParams {
   [param: string]:
     | string
     | number
     | boolean
     | ReadonlyArray<string | number | boolean>;
-  api_key: string;
-}
-
-export interface ExchangeRateRequestParams extends RequestParams {
   base: string;
-  currencies: string;
 }
 
 export interface CurrencyDropdownSelectionObj {
@@ -66,4 +62,9 @@ export interface CountryInfo {
       symbol: string;
     };
   };
+}
+
+export interface CurrencyInfo {
+  name: string;
+  symbol: string;
 }

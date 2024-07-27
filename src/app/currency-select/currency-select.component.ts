@@ -30,26 +30,6 @@ export class CurrencySelectComponent {
 
   filteredCurrencies: any[] = [];
 
-  constructor(private exchangerateService: ExchangeratesService) {}
-
-  ngOnInit() {
-    /*this.symbolsService
-      .getSymbols('https://api.forexrateapi.com/v1/symbols', {
-        api_key: '99cca293e5982c0bdbd1940c35137b07',
-      })
-      .subscribe((symbols: Symbols) => {
-        this.currencies = Object.entries(symbols.symbols).map(
-          ([key, value]) => {
-            return { name: key };
-          }
-        );
-      });*/
-    /*this.exchangerateService.getExchangeRates("https://api.forexrateapi.com/v1/latest", {api_key:"99cca293e5982c0bdbd1940c35137b07", base: "EUR", currencies: ["USD", "INR", "JPY"].join(',')}).subscribe((exchangeRates: ExchangeRates)=>{
-      console.log(exchangeRates.rates);
-    })*/
-    //this.selectedCurrency = this.initialCurrency;
-  }
-
   filterCurrencies(event: AutoCompleteCompleteEvent) {
     let filtered: any[] = [];
     let query = event.query;

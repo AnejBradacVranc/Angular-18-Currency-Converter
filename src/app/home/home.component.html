@@ -1,39 +1,51 @@
 <h1>Currency converter</h1>
 <div class="p-fluid m-5 p-5">
-  <div
-    class="flex flex-column align-items-center justify-content-center md:flex-row gap-3"
-  >
-    <div class="field">
-      <label for="amount">Amount</label>
-      <p-inputNumber
-        inputId="amount"
-        [(ngModel)]="amount"
-        mode="currency"
-        currency="EUR"
-        locale="de-DE"
-      ></p-inputNumber>
+  <div class="grid">
+    <div
+      class="flex flex-column align-items-center justify-content-center md:flex-row gap-3 col-12"
+    >
+      <div class="field">
+        <label for="amount">Amount</label>
+        <p-inputNumber
+          inputId="amount"
+          [(ngModel)]="amount"
+          mode="currency"
+          currency="EUR"
+          locale="de-DE"
+        ></p-inputNumber>
+      </div>
+
+      <div>
+        <app-currency-select
+          [currCodes]="currencyCodes"
+          [(selectedCurrency)]="currencyFrom"
+          label="From"
+          inputId="currencyFrom"
+          (currencyChange)="
+            sharedService.setCurrencyFrom($event); isConversionHidden = true
+          "
+        ></app-currency-select>
+      </div>
+
+      <app-switch-button (swapMethod)="swapCurrencies()"></app-switch-button>
+
+      <div>
+        <app-currency-select
+          [currCodes]="currencyCodes"
+          [(selectedCurrency)]="currencyTo"
+          label="To"
+          inputId="currencyTo"
+          (currencyChange)="
+            sharedService.setCurrencyTo($event); isConversionHidden = true
+          "
+        ></app-currency-select>
+      </div>
     </div>
-
-    <div>
-      <app-currency-select
-        [currCodes]="currencyCodes"
-        [(selectedCurrency)]="currencyFrom"
-        label="From"
-        inputId="currencyFrom"
-        (currencyChange)="sharedService.setCurrencyFrom($event)"
-      ></app-currency-select>
+    <div class="col-fixed m-1 p-1">
+      <p-button (onClick)="onConvert()">Convert</p-button>
     </div>
-
-    <app-switch-button (swapMethod)="swapCurrencies()"></app-switch-button>
-
-    <div>
-      <app-currency-select
-        [currCodes]="currencyCodes"
-        [(selectedCurrency)]="currencyTo"
-        label="To"
-        inputId="currencyTo"
-        (currencyChange)="sharedService.setCurrencyTo($event)"
-      ></app-currency-select>
+    <div class="col" [hidden]="isConversionHidden">
+      {{ convertedAmount }} {{ currencyTo.name }}
     </div>
   </div>
 </div>

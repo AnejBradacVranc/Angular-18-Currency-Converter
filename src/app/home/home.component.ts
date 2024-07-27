@@ -8,11 +8,17 @@ import {
 } from 'primeng/autocomplete';
 import { FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { CountryInfo, CurrencyDropdownSelectionObj } from '../../types';
+import {
+  CountryInfo,
+  CurrencyDropdownSelectionObj,
+  CurrencyInfo,
+  ExchangeRates,
+} from '../../types';
 import { CurrencySelectComponent } from '../currency-select/currency-select.component';
 import { SwitchButtonComponent } from '../switch-button/switch-button.component';
 import { DropdownSharedService } from '../services/dropdown-shared.service';
 import { CountryInfoService } from '../services/country-info.service';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-home',
@@ -25,22 +31,34 @@ import { CountryInfoService } from '../services/country-info.service';
     InputNumberModule,
     CurrencySelectComponent,
     SwitchButtonComponent,
+    ButtonModule,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
   amount = 0;
+  convertedAmount = 0;
+
+  isConversionHidden = true;
 
   currencyFrom: CurrencyDropdownSelectionObj = { name: '' };
   currencyTo: CurrencyDropdownSelectionObj = { name: '' };
 
   currencyCodes: any[] = [];
-  currencyInfos: Map<string, any> = new Map();
+  currencyInfos: Map<string, CurrencyInfo> = new Map();
+  exchangeRates: ExchangeRates = {
+    base: '',
+    date: new Date(),
+    provider: '',
+    timeLastUpdated: 0,
+    rates: {},
+  };
 
   constructor(
     protected sharedService: DropdownSharedService,
-    private countryInfoService: CountryInfoService
+    private countryInfoService: CountryInfoService,
+    private exchangerateService: ExchangeratesService
   ) {
     this.sharedService.currencyFrom$.subscribe(
       (val: CurrencyDropdownSelectionObj) => {
@@ -55,6 +73,15 @@ export class HomeComponent {
         this.onHandleCurrencyChange();
       }
     );
+
+    //Za enkrat je samo v konstruktorju. Mora se to klicat vedno ko se spremeni From...!!!
+    this.exchangerateService
+      .getExchangeRates('https://api.exchangerate-api.com/v4/latest', {
+        base: 'EUR',
+      })
+      .subscribe((exchangeRates: ExchangeRates) => {
+        this.exchangeRates = exchangeRates;
+      });
   }
 
   ngOnInit() {
@@ -66,16 +93,16 @@ export class HomeComponent {
       .subscribe((data: CountryInfo[]) => {
         data.forEach((value: CountryInfo) => {
           this.currencyInfos.set(
-            Object.entries(value.currencies).map(([key, value]) => {
+            Object.entries(value.currencies).map(([key, _]) => {
               return key;
             })[0],
-            Object.entries(value.currencies).map(([key, value]) => {
+            Object.entries(value.currencies).map(([_, value]) => {
               return value;
             })[0]
           );
 
           this.currencyCodes.push(
-            Object.entries(value.currencies).map(([key, value]) => {
+            Object.entries(value.currencies).map(([key, _]) => {
               return key;
             })[0]
           );
@@ -103,13 +130,21 @@ export class HomeComponent {
     this.sharedService.setCurrencyFrom(this.currencyFrom);
     this.sharedService.setCurrencyTo(this.currencyTo);
 
+    this.isConversionHidden = true;
+
     console.log('Currencies swapped');
   }
 
   onHandleCurrencyChange() {
     if (this.currencyFrom.name == this.currencyTo.name) {
       this.sharedService.currencyFrom$.subscribe((val) => console.log(val));
-      console.log('Bomboclat');
     }
+  }
+
+  onConvert() {
+    console.log(this.exchangeRates.rates[this.currencyTo.name]);
+    this.convertedAmount =
+      this.amount * this.exchangeRates.rates[this.currencyTo.name];
+    this.isConversionHidden = false;
   }
 }
