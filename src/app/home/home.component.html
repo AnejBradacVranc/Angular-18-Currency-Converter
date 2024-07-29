@@ -1,51 +1,71 @@
-<h1>Currency converter</h1>
-<div class="p-fluid m-5 p-5">
-  <div class="grid">
-    <div
-      class="flex flex-column align-items-center justify-content-center md:flex-row gap-3 col-12"
-    >
-      <div class="field">
-        <label for="amount">Amount</label>
-        <p-inputNumber
-          inputId="amount"
-          [(ngModel)]="amount"
-          mode="currency"
-          currency="EUR"
-          locale="de-DE"
-        ></p-inputNumber>
+<h1 class="p-1 text-white">Currency converter</h1>
+<p-card class="m-1">
+  <div class="p-fluid m-5 p-5">
+    <div class="grid">
+      <div
+        class="flex flex-column align-items-center justify-content-center md:flex-row gap-3 col-12"
+      >
+        <div class="field">
+          <label for="amount">Amount</label>
+          <p-inputNumber
+            inputId="amount"
+            [(ngModel)]="amount"
+            mode="currency"
+            [currency]="currencyFrom.name"
+            locale="de-DE"
+            (onInput)="convert()"
+          ></p-inputNumber>
+        </div>
+
+        <div>
+          <app-currency-select
+            [currCodes]="currencyCodes"
+            [(selectedCurrency)]="currencyFrom"
+            label="From"
+            inputId="currencyFrom"
+            (currencyChange)="
+              sharedService.setCurrencyFrom($event); isConversionHidden = true
+            "
+          ></app-currency-select>
+        </div>
+
+        <app-switch-button (swapMethod)="swapCurrencies()"></app-switch-button>
+
+        <div>
+          <app-currency-select
+            [currCodes]="currencyCodes"
+            [(selectedCurrency)]="currencyTo"
+            label="To"
+            inputId="currencyTo"
+            (currencyChange)="
+              sharedService.setCurrencyTo($event); isConversionHidden = true
+            "
+          ></app-currency-select>
+        </div>
+
+        <div>
+          <p-button severity="success" raised="true" (onClick)="onConvert()"
+            >Calculate</p-button
+          >
+        </div>
       </div>
 
-      <div>
-        <app-currency-select
-          [currCodes]="currencyCodes"
-          [(selectedCurrency)]="currencyFrom"
-          label="From"
-          inputId="currencyFrom"
-          (currencyChange)="
-            sharedService.setCurrencyFrom($event); isConversionHidden = true
-          "
-        ></app-currency-select>
+      <div class="col" [hidden]="isConversionHidden">
+        <p-card header="Conversion">
+          <p class="p-2 text-xl font-medium">
+            {{ amount }} {{ currencyFrom.name }} =
+          </p>
+          <p class="p-2 text-5xl font-bold">
+            {{ convertedAmount }}
+            {{ currencyTo.name }}
+          </p>
+          <p class="p-2 text-lg font-light">
+            1 {{ currencyFrom.name }} =
+            {{ this.exchangeRates.rates[this.currencyTo.name] }}
+            {{ currencyTo.name }}
+          </p>
+        </p-card>
       </div>
-
-      <app-switch-button (swapMethod)="swapCurrencies()"></app-switch-button>
-
-      <div>
-        <app-currency-select
-          [currCodes]="currencyCodes"
-          [(selectedCurrency)]="currencyTo"
-          label="To"
-          inputId="currencyTo"
-          (currencyChange)="
-            sharedService.setCurrencyTo($event); isConversionHidden = true
-          "
-        ></app-currency-select>
-      </div>
-    </div>
-    <div class="col-fixed m-1 p-1">
-      <p-button (onClick)="onConvert()">Convert</p-button>
-    </div>
-    <div class="col" [hidden]="isConversionHidden">
-      {{ convertedAmount }} {{ currencyTo.name }}
     </div>
   </div>
-</div>
+</p-card>

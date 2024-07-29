@@ -2,10 +2,7 @@ import { Component } from '@angular/core';
 import { ExchangeratesService } from '../services/exchangerates.service';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import {
-  AutoCompleteCompleteEvent,
-  AutoCompleteModule,
-} from 'primeng/autocomplete';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 import { FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import {
@@ -19,6 +16,7 @@ import { SwitchButtonComponent } from '../switch-button/switch-button.component'
 import { DropdownSharedService } from '../services/dropdown-shared.service';
 import { CountryInfoService } from '../services/country-info.service';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-home',
@@ -32,6 +30,7 @@ import { ButtonModule } from 'primeng/button';
     CurrencySelectComponent,
     SwitchButtonComponent,
     ButtonModule,
+    CardModule,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -63,23 +62,30 @@ export class HomeComponent {
     this.sharedService.currencyFrom$.subscribe(
       (val: CurrencyDropdownSelectionObj) => {
         this.currencyFrom = val;
-        this.onHandleCurrencyChange();
       }
     );
 
     this.sharedService.currencyTo$.subscribe(
       (val: CurrencyDropdownSelectionObj) => {
         this.currencyTo = val;
-        this.onHandleCurrencyChange();
       }
     );
-
-    //Za enkrat je samo v konstruktorju. Mora se to klicat vedno ko se spremeni From...!!!
     this.exchangerateService
       .getExchangeRates('https://api.exchangerate-api.com/v4/latest', {
         base: 'EUR',
       })
       .subscribe((exchangeRates: ExchangeRates) => {
+        this.exchangeRates = exchangeRates;
+      });
+  }
+
+  protected setExchangeRates() {
+    this.exchangerateService
+      .getExchangeRates('https://api.exchangerate-api.com/v4/latest', {
+        base: this.currencyFrom.name,
+      })
+      .subscribe((exchangeRates: ExchangeRates) => {
+        console.log(exchangeRates);
         this.exchangeRates = exchangeRates;
       });
   }
@@ -131,20 +137,16 @@ export class HomeComponent {
     this.sharedService.setCurrencyTo(this.currencyTo);
 
     this.isConversionHidden = true;
-
-    console.log('Currencies swapped');
+    this.setExchangeRates();
   }
 
-  onHandleCurrencyChange() {
-    if (this.currencyFrom.name == this.currencyTo.name) {
-      this.sharedService.currencyFrom$.subscribe((val) => console.log(val));
-    }
+  convert() {
+    this.convertedAmount =
+      this.amount * this.exchangeRates.rates[this.currencyTo.name];
   }
 
   onConvert() {
-    console.log(this.exchangeRates.rates[this.currencyTo.name]);
-    this.convertedAmount =
-      this.amount * this.exchangeRates.rates[this.currencyTo.name];
+    this.convert();
     this.isConversionHidden = false;
   }
 }
